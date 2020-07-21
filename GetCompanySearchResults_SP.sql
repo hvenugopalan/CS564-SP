@@ -22,22 +22,22 @@ BEGIN
     IF(type = 'stock') THEN
     BEGIN
 		IF( name IS NOT NULL and name<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND s.name = ''', ticker, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND s.name = ''', name, '''');
 		END IF;
     
 		IF( year IS NOT NULL) THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND c.year = ''', year, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND c.year = year');
 		END IF;
         
         IF( roa IS NOT NULL) THEN
 			IF(roa = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) > 0');
+				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker, year) > 0');
 			ELSEIF(roa = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) < 0');
+				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker, year) < 0');
 			ELSEIF(roa = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) > 15');
+				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker, year) > 15');
 			ELSEIF(roa = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) < -15');
+				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker, year) < -15');
 			END IF;
 		END IF;
         
@@ -47,25 +47,25 @@ BEGIN
         
         IF( operation_margin IS NOT NULL) THEN
 			IF(operation_margin = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  > 0' );
+				SET innerQuery = CONCAT(innerQuery, ' AND operatingMargin(c.ticker, year)  > 0' );
 			ELSEIF(operation_margin = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  < 0');
+				SET innerQuery = CONCAT(innerQuery, ' AND operatingMargin(c.ticker, year)  < 0');
 			ELSEIF(operation_margin = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  < -20');
+				SET innerQuery = CONCAT(innerQuery, ' AND operatingMargin(c.ticker, year)  < -20');
 			ELSEIF(operation_margin = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  > 25');
+				SET innerQuery = CONCAT(innerQuery, ' AND operatingMargin(c.ticker, year)  > 25');
 			END IF;
 		END IF;
         
          IF( net_margin IS NOT NULL) THEN
 			IF(net_margin = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  > 0' );
+				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, year)  > 0' );
 			ELSEIF(net_margin = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  < 0');
+				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, year)  < 0');
 			ELSEIF(net_margin = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  < -20');
+				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, year)  < -20');
 			ELSEIF(net_margin = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  > 20');
+				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, year)  > 20');
 			END IF;
 		END IF;
         
@@ -79,9 +79,9 @@ BEGIN
         
          IF( shareholder_equity IS NOT NULL) THEN
 			IF(shareholder_equity = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND shareholderEquity(c.ticker) > 0' );
+				SET innerQuery = CONCAT(innerQuery, ' AND shareholderEquity(c.ticker, year) > 0' );
 			ELSEIF(shareholder_equity = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND shareholderEquity(c.ticker) < 0');
+				SET innerQuery = CONCAT(innerQuery, ' AND shareholderEquity(c.ticker, year) < 0');
 			END IF;
 		END IF;
         
@@ -90,59 +90,11 @@ BEGIN
     ELSEIF(type = 'etf') THEN
     BEGIN
 		IF( name IS NOT NULL and name<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND e.name = ''', ticker, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND e.name = ''', name, '''');
 		END IF;
-    
-		IF( year IS NOT NULL) THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND c.year = ''', year, '''');
-		END IF;
-        
-        IF( roa IS NOT NULL) THEN
-			IF(roa = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) > 0');
-			ELSEIF(roa = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) < 0');
-			ELSEIF(roa = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) > 15');
-			ELSEIF(roa = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND roa(c.ticker) < -15');
-			END IF;
-		END IF;
-              
-        IF( operation_margin IS NOT NULL) THEN
-			IF(operation_margin = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  > 0' );
-			ELSEIF(operation_margin = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  < 0');
-			ELSEIF(operation_margin = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  < -20');
-			ELSEIF(operation_margin = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND operationMargin(c.ticker)  > 25');
-			END IF;
-		END IF;
-        
-		IF( net_margin IS NOT NULL) THEN
-			IF(net_margin = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  > 0' );
-			ELSEIF(net_margin = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  < 0');
-			ELSEIF(net_margin = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  < -20');
-			ELSEIF(net_margin = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND netMargin(c.ticker, ', year, ')  > 20');
-			END IF;
-		END IF;
-        
+       
         IF( ticker IS NOT NULL and ticker<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND e.ticker = ''', ticker, '''');
-		END IF;
-        
-		IF( shareholder_equity IS NOT NULL) THEN
-			IF(shareholder_equity = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND shareholderEquity(c.ticker) > 0' );
-			ELSEIF(shareholder_equity = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND shareholderEquity(c.ticker) < 0');
-			END IF;
+			SET innerQuery = CONCAT(innerQuery, ' AND h.stock_ticker = ''', ticker, '''');
 		END IF;
         
         IF( inception_date IS NOT NULL) THEN
@@ -173,19 +125,19 @@ BEGIN
         
         IF( company_weight IS NOT NULL) THEN
 			IF(company_weight = 1) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND e.company_weight BETWEEN 0 and 1');
+				SET innerQuery = CONCAT(innerQuery, ' AND h.weight BETWEEN 0 and 1');
 			ELSEIF(company_weight = 2) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND e.company_weight BETWEEN 1 and 3');
+				SET innerQuery = CONCAT(innerQuery, ' AND h.weight BETWEEN 1 and 3');
 			ELSEIF(company_weight = 3) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND e.company_weight BETWEEN 3 and 5');
+				SET innerQuery = CONCAT(innerQuery, ' AND h.weight BETWEEN 3 and 5');
 			ELSEIF(company_weight = 4) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND e.company_weight BETWEEN 5 and 10');
+				SET innerQuery = CONCAT(innerQuery, ' AND h.weight BETWEEN 5 and 10');
 			ELSEIF(company_weight = 5) THEN
-				SET innerQuery = CONCAT(innerQuery, ' AND e.company_weight > 10');
+				SET innerQuery = CONCAT(innerQuery, ' AND h.weight > 10');
 			END IF;
 		END IF;
         
-		SET @Query = CONCAT('SELECT DISTINCT c.ticker, e.name, current_price(c.ticker) as current_price FROM company c INNER JOIN etf e ON c.ticker = e.ticker', innerQuery, ' limit 0,1000');
+		SET @Query = CONCAT('SELECT DISTINCT e.ticker, e.name, current_price(e.ticker) as current_price FROM etf e INNER JOIN holds h on e.ticker = h.etf_ticker  ', innerQuery, ' limit 0,1000');
     END;
     END IF;
 
@@ -194,5 +146,8 @@ BEGIN
 
 END $$
 DELIMITER ;
-
+-- name, roa, year, sector, operation_margin, net_margin, industry, ticker, shareholder_equity, inception_date, shares_outstanding, company_weight
 -- drop procedure GetCompanySearchResults
+-- use InvestmentPortfolio
+-- select * from company where ticker='AAPL'
+-- call GetCompanySearchResults(null, null, null, null, null, null, null, null, null, null, null, 1, 'etf')
