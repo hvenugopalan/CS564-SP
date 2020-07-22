@@ -20,7 +20,7 @@ SET cuml_amount = 0;
 		END IF;
 	
     ELSEIF(transaction_type = 'sell') THEN
-		SELECT sum(amount) INTO cuml_amount FROM contains WHERE pid = in_pid;
+		SELECT sum(amount) INTO cuml_amount FROM contains WHERE pid = in_pid and ticker = in_ticker;
         IF cuml_amount IS NOT NULL THEN
 			SET cuml_amount = cuml_amount - current_price(in_ticker) * in_quantity;
             IF cuml_amount < 0 THEN
@@ -37,5 +37,5 @@ END $$
 DELIMITER ;
 
 -- drop procedure BuySellSecurity
--- select current_price('A')
--- call BuySellSecurity(23, 'A', 1, 'buy')
+-- select current_price('AAPL')
+-- call BuySellSecurity(23, 'AAPL', 1, 'sell')
