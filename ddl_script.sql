@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS stock(
     name VARCHAR(50),
     sector VARCHAR(50),
     industry VARCHAR(50),
-    PRIMARY KEY(ticker)
+    PRIMARY KEY(ticker),
+	FOREIGN KEY(ticker) REFERENCES company(ticker) ON DELETE CASCADE
  );
   
 CREATE TABLE IF NOT EXISTS security_listing(
@@ -36,9 +37,6 @@ CREATE TABLE IF NOT EXISTS etf(
     shares_outstanding BIGINT,
     PRIMARY KEY(ticker) 
 );
-
-drop table Investor;
-drop table Portfolio;
 
 CREATE TABLE IF NOT EXISTS investor(
 	account_number BIGINT NOT NULL AUTO_INCREMENT,
