@@ -89,7 +89,7 @@ BEGIN
 	SELECT AVG(L.price) 
     INTO curr_price
 	FROM security_listing L 
-	WHERE L.date LIKE '2018-%' AND L.ticker = securityID;
+	WHERE YEAR(L.date) = (select max(YEAR(date)) FROM security_listing WHERE ticker = securityID) AND L.ticker = securityID;
     RETURN curr_price;
 END $$
 DELIMITER ;

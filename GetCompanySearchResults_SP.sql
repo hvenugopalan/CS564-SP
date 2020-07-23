@@ -22,7 +22,7 @@ BEGIN
     IF(type = 'stock') THEN
     BEGIN
 		IF( name IS NOT NULL and name<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND s.name = ''', name, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND s.name LIKE ''%', name, '%''');
 		END IF;
     
 		IF( year IS NOT NULL) THEN
@@ -42,7 +42,7 @@ BEGIN
 		END IF;
         
         IF( sector IS NOT NULL and sector<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND s.sector = ''', sector, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND s.sector LIKE ''%', sector, '%''');
 		END IF;
         
         IF( operation_margin IS NOT NULL) THEN
@@ -70,11 +70,11 @@ BEGIN
 		END IF;
         
         IF( industry IS NOT NULL and industry<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND s.industry = ''', industry, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND s.industry = ''%', industry, '%''');
 		END IF;
         
         IF( ticker IS NOT NULL and ticker<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND s.ticker = ''', ticker, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND s.ticker LIKE ''%', ticker, '%''');
 		END IF;
         
          IF( shareholder_equity IS NOT NULL) THEN
@@ -85,16 +85,16 @@ BEGIN
 			END IF;
 		END IF;
         
-		SET @Query = CONCAT('SELECT DISTINCT c.ticker, s.name, current_price(c.ticker) as current_price FROM company c INNER JOIN stock s ON c.ticker = s.ticker ', innerQuery, ' limit 0,1000' );
+		SET @Query = CONCAT('SELECT DISTINCT c.ticker, s.name, current_price2(c.ticker) as current_price FROM company c INNER JOIN stock s ON c.ticker = s.ticker ', innerQuery, ' limit 0,1000' );
     END;
     ELSEIF(type = 'etf') THEN
     BEGIN
 		IF( name IS NOT NULL and name<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND e.name = ''', name, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND e.name LIKE ''%', name, '%''');
 		END IF;
        
         IF( ticker IS NOT NULL and ticker<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND h.stock_ticker = ''', ticker, '''');
+			SET innerQuery = CONCAT(innerQuery, ' AND h.stock_ticker LIKE ''%', ticker, '%''');
 		END IF;
         
         IF( inception_date IS NOT NULL) THEN
@@ -137,7 +137,7 @@ BEGIN
 			END IF;
 		END IF;
         
-		SET @Query = CONCAT('SELECT DISTINCT e.ticker, e.name, current_price(e.ticker) as current_price FROM etf e INNER JOIN holds h on e.ticker = h.etf_ticker  ', innerQuery, ' limit 0,1000');
+		SET @Query = CONCAT('SELECT DISTINCT e.ticker, e.name, current_price2(e.ticker) as current_price FROM etf e INNER JOIN holds h on e.ticker = h.etf_ticker  ', innerQuery, ' limit 0,1000');
     END;
     END IF;
 
