@@ -70,7 +70,7 @@ BEGIN
 		END IF;
         
         IF( industry IS NOT NULL and industry<>'') THEN
-			SET innerQuery = CONCAT(innerQuery, ' AND s.industry = ''%', industry, '%''');
+			SET innerQuery = CONCAT(innerQuery, ' AND s.industry LIKE ''%', industry, '%''');
 		END IF;
         
         IF( ticker IS NOT NULL and ticker<>'') THEN
@@ -140,7 +140,6 @@ BEGIN
 		SET @Query = CONCAT('SELECT DISTINCT e.ticker, e.name, current_price2(e.ticker) as current_price FROM etf e INNER JOIN holds h on e.ticker = h.etf_ticker  ', innerQuery, ' limit 0,1000');
     END;
     END IF;
-
 	PREPARE b FROM @Query;
 	EXECUTE b;
 
@@ -150,4 +149,7 @@ DELIMITER ;
 -- drop procedure GetCompanySearchResults
 -- use InvestmentPortfolio
 -- select * from company where ticker='AAPL'
--- call GetCompanySearchResults(null, null, null, null, null, null, null, null, null, null, null, 1, 'etf')
+-- call GetCompanySearchResults(null, null, null, null, null, null, null, 'AAPL', null, null, null, 2, 'etf')
+-- select current_price2('AAPL')
+-- select * from company where net_income>revenue
+-- select * from holds where stock_ticker = 'AAPL'

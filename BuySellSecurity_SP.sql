@@ -30,6 +30,8 @@ SET cuml_amount = 0;
 			ELSE
 				UPDATE contains SET  amount = cuml_amount WHERE pid = in_pid AND ticker = in_ticker;
 			END IF;
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You do not own any shares of this security.', MYSQL_ERRNO = 1001;
 		END IF;
         
     END IF;
@@ -38,5 +40,5 @@ DELIMITER ;
 
 -- drop procedure BuySellSecurity
 -- select current_price('AAPL')
--- call BuySellSecurity(23, 'AAPL', 1, 'buy')
+-- call BuySellSecurity(55, 'EBAY', 1, 'sell')
 -- select * from contains
